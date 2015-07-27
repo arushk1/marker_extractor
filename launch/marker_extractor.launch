@@ -1,0 +1,17 @@
+<launch>
+ <arg name="name" default="marker_extractor"/>
+  <node pkg="marker_extractor" name="$(arg name)" type="marker_extractor_node" output="screen">
+    <param name="pattern_width" value="8"/>
+    <param name="pattern_height" value="6"/>
+    <param name="pattern_scale" value="3"/>
+
+    <param name="robust" value="true" type="bool"/>
+    <param name="robust_iteration_count" value="100" type="int"/>
+    <param name="robust_max_reprojection_error" value="1" type="double"/>
+    <param name="robust_min_inliers_count" value="30" type="int"/>
+
+    <remap from="$(arg name)/image_rect" to="/camera/rgb/image_rect_color"/>
+    <remap from="/camera_info" to="/camera/rgb/camera_info"/>
+    <remap from="$(arg name)/get_calibration" to="/localhost/camera/get_calibration"/>
+  </node>
+</launch>
