@@ -8,6 +8,8 @@
 #include "tf/tf.h"
 #include <tf/transform_broadcaster.h>
 
+using namespace std;
+
 MarkerExtractor::MarkerExtractor():
     calibration_set_(false)
 {
@@ -160,11 +162,9 @@ void MarkerExtractor::cbImage(const sensor_msgs::ImageConstPtr &msg)
         ROS_INFO_STREAM("r: " << r);
         ROS_INFO_STREAM("t: " << t);
 
-//        if(pose_pub_.getNumSubscribers())
-//        {
+        if(pose_pub_.getNumSubscribers())
+        {
             tf::Quaternion q;
-            tf::Transform tf_pub;
-            tf::TransformBroadcaster br;
             q.setRPY(r.at<double>(0),r.at<double>(1),r.at<double>(2));
             geometry_msgs::PoseStamped pose;
             pose.header = msg->header;
@@ -176,12 +176,9 @@ void MarkerExtractor::cbImage(const sensor_msgs::ImageConstPtr &msg)
             pose.pose.orientation.y = q.getY();
             pose.pose.orientation.z = q.getZ();
 
-            tf_pub.setOrigin(tf::Vector3(pose.pose.position.x, pose.pose.position.z, pose.pose.position.z));
-            tf_pub.setRotation(q);
-            br.sendTransform(tf::StampedTransform(tf_pub, ros::Time::now(), "camera_link", "checker_frame"));
-
+            cout << "Publishing" << endl;
             pose_pub_.publish(pose);
-//        }
+        }
     }
     catch (cv::Exception& e)
     {
